@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
+
 dotenv.config();
+
+
+
 
 // Se intenta conectar a MongoDB con Mongoose
 async function connectDB() {
@@ -13,5 +17,8 @@ async function connectDB() {
     process.exit(1);
   }
 }
+
+
+
 
 module.exports = connectDB;
