@@ -34,11 +34,16 @@ const listBooksAction = require("../actions/list.books.action"); // Importamos l
 */
 async function createBook(req, res) {
     try {
+        // Verificar el permiso necesario
+        if (!req.user.permisos.includes("crear_libro")) {
+            return res.status(403).json({ message: "No autorizado. No tienes los permisos para hacer eso. Contacta a un administrador." });
+        }
+
         // Llamamos a la acción que contiene la lógica de negocio
         const book = await createBookAction(req.body);
         
         // Devolvemos código 201 (Created) y los datos del libro
-        res.status(201).json({ message: "Libro creado", book });
+        res.status(201).json({ message: "Libro agregado a la biblioteca", book });
     } catch (err) {
         // Si hay error, devolvemos código 400 (Bad Request) y el mensaje
         res.status(400).json({ message: err.message });
@@ -116,6 +121,11 @@ async function getBookById(req, res) {
 */
 async function updateBook(req, res) {
     try {
+        // Verificar el permiso necesario
+        if (!req.user.permisos.includes("modificar_libro")) {
+            return res.status(403).json({ message: "No autorizado. No tienes los permisos para hacer eso. Contacta a un administrador." });
+        }
+
         // Llamamos a la acción con el ID del libro y los datos a actualizar
         const book = await updateBookAction(req.params.id, req.body);
         
@@ -151,14 +161,19 @@ async function updateBook(req, res) {
 */
 async function deleteBook(req, res) {
     try {
-    // Llamamos a la acción para deshabilitar el libro
-    await deleteBookAction(req.params.id);
+        // Verificar el permiso necesario
+        if (!req.user.permisos.includes("inhabilitar_libro")) {
+            return res.status(403).json({ message: "No autorizado. No tienes los permisos para hacer eso. Contacta a un administrador." });
+        }
 
-    // Devolvemos mensaje de confirmación sin incluir los datos del libro
-    res.json({ message: "Libro deshabilitado" });
-    } catch (err) {
-    // Si hay error, devolvemos código 400 (Bad Request) y el mensaje
-    res.status(400).json({ message: err.message });
+        // Llamamos a la acción para deshabilitar el libro
+        await deleteBookAction(req.params.id);
+
+        // Devolvemos mensaje de confirmación sin incluir los datos del libro
+        res.json({ message: "Libro deshabilitado" });
+        } catch (err) {
+        // Si hay error, devolvemos código 400 (Bad Request) y el mensaje
+        res.status(400).json({ message: err.message });
     }
 }
 

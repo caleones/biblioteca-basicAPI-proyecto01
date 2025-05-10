@@ -31,8 +31,8 @@ const BookModel = require("../models/book.model"); // Importamos el modelo de li
 async function createReservationAction({ usuario, libro, fechaReserva, fechaEntrega }) {
     // Verificar que el libro esté disponible
     const book = await BookModel.findById(libro);
-    if (!book || !book.disponibilidad) {
-    throw new Error("Libro no disponible");
+    if (!book || !book.disponibilidad || !book.habilitado) {
+        throw new Error("Libro no disponible");
     }
 
     // Crear la reserva con los datos proporcionados

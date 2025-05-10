@@ -11,31 +11,36 @@ const mongoose = require("mongoose"); // Importamos mongoose para crear el esque
 */
 const ReservationSchema = new mongoose.Schema(
     {
-    // Usuario que realiza la reserva (relación con el modelo User)
-    usuario: {
-        type: mongoose.Schema.Types.ObjectId, // Tipo ObjectId para referencia
-        ref: "User", // Referencia al modelo User
-        required: true // Campo obligatorio
-    },
+        // Usuario que realiza la reserva (relación con el modelo User)
+        usuario: {
+            type: mongoose.Schema.Types.ObjectId, // Tipo ObjectId para referencia
+            ref: "User", // Referencia al modelo User
+            required: true // Campo obligatorio
+        },
 
-    // Libro que se está reservando (relación con el modelo Book)
-    libro: {
-        type: mongoose.Schema.Types.ObjectId, // Tipo ObjectId para referencia
-        ref: "Book", // Referencia al modelo Book
-        required: true // Campo obligatorio
-    },
+        // Libro que se está reservando (relación con el modelo Book)
+        libro: {
+            type: mongoose.Schema.Types.ObjectId, // Tipo ObjectId para referencia
+            ref: "Book", // Referencia al modelo Book
+            required: true // Campo obligatorio
+        },
 
-    // Fecha en que se realizó la reserva
-    fechaReserva: {
-        type: Date, // Tipo fecha
-        default: Date.now // Por defecto la fecha actual
-    },
+        // Fecha en que se realizó la reserva
+        fechaReserva: {
+            type: Date, // Tipo fecha
+            default: Date.now // Por defecto la fecha actual
+        },
 
-    // Fecha límite para devolver el libro
-    fechaEntrega: {
-        type: Date, // Tipo fecha
-        required: true // Campo obligatorio
-    }
+        // Fecha límite para devolver el libro
+        fechaEntrega: {
+            type: Date, // Tipo fecha
+            required: true // Campo obligatorio
+        },
+
+        devuelto: {
+        type: Boolean,
+        default: false   // Por defecto, la reserva no está devuelta
+        }
     },
     {
         // Configuración adicional del esquema

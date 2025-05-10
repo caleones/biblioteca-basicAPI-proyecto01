@@ -80,11 +80,15 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
 
 
+// Exportar la app para tests
+module.exports = app;
 
 
-// Iniciar el servidor solo después de conectar a la base de datos
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto ${PORT}`);
+// Iniciar el servidor solo si no estamos en modo test
+if (process.env.NODE_ENV !== 'test') {
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en puerto ${PORT}`);
+    });
   });
-});
+}

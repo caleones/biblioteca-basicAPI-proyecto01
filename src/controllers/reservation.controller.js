@@ -1,6 +1,7 @@
 const createReservationAction = require("../actions/create.reservation.action"); // Importamos la acción de crear reservas
 const listReservationsByUserAction = require("../actions/list.reservations.byUser.action"); // Importamos la acción de listar reservas por usuario
 const listReservationsByBookAction = require("../actions/list.reservations.byBook.action"); // Importamos la acción de listar reservas por libro
+const endReservationAction = require("../actions/end.reservation.action"); // Importamos la acción de devolver libro
 
 
 
@@ -118,7 +119,7 @@ async function getReservationsByBook(req, res) {
  * //   "message": "Historial de reservas del usuario",
  * //   "reservations": [ ... lista de reservas con datos de libros ... ]
  * // }
- */
+*/
 async function getReservationsByUser(req, res) {
     try {
         // Obtenemos el ID del usuario desde los parámetros de la URL
@@ -136,10 +137,61 @@ async function getReservationsByUser(req, res) {
 }
 
 
+/**
+ * Controlador para finalizar una reserva de libro
+ * 
+ * Este controlador recibe el ID de la reserva como parámetro en la URL,
+ * llama a la acción correspondiente para finalizar la reserva y devuelve
+ * un mensaje de éxito o un error si no se encuentra la reserva.
+ * 
+ * @param {Request} req - Objeto de solicitud Express
+ * @param {Response} res - Objeto de respuesta Express
+ * @param {Object} req.params - Parámetros de la URL
+ * @param {string} req.params.id - ID de la reserva a finalizar
+ * 
+ * @returns {Promise<void>}
+ * 
+ * @example
+ * // Respuesta exitosa (200 OK):
+ * // {
+ * //   "message": "Libro devuelto con éxito",
+ * //   "reservation": { ... datos de la reserva actualizada ... }
+ * // }
+*/
+async function endReservation(req, res) {
+  const { id } = req.params;
+  try {
+    // Buscar la reserva
+    const reservation = await ReservationModel.findById(id);
+    if (!reservation) {
+      return res.status(404).json({ message: "Reserva no encontrada" });
+    }
+    
+    // Verificar que el usuario sea el propietario de la reserva
+    if (String(reservation.usuario) !== String(req.user.id)) {
+      return res.status(403).json({ message: "No autorizado. No eres el propietario de esta reserva." });
+    }
+    
+    // Finalizar la reserva y manejar posibles errores
+    try {
+      const updatedReservation = await endReservationAction(id);
+      return res.json({ message: "Libro devuelto con éxito", reservation: updatedReservation });
+    } catch (actionError) {
+      console.error("Error en endReservationAction:", actionError);
+      return res.status(400).json({ message: actionError.message });
+    }
+  } catch (err) {
+    console.error("Error general en endReservation:", err);
+    return res.status(400).json({ message: err.message });
+  }
+}
+
+
 
 
 module.exports = {
     createReservation,
     getReservationsByBook,
-    getReservationsByUser
+    getReservationsByUser,
+    endReservation
 };

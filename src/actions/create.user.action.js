@@ -13,7 +13,7 @@ const bcrypt = require("bcryptjs"); // Importamos bcrypt para el cifrado de cont
  * @param {Array} permisos - Permisos del usuario (opcional, por defecto vacío)
  * @returns {Promise} Promesa que resuelve con el usuario creado
 */
-async function createUserAction({ nombre, correo, contraseña, permisos = [] }) {
+async function createUserAction({ id, nombre, correo, contraseña, permisos = [] }) {
   // Generamos un "salt" (valor aleatorio) para reforzar la seguridad del hash
   const salt = await bcrypt.genSalt(10);
 
@@ -26,7 +26,7 @@ async function createUserAction({ nombre, correo, contraseña, permisos = [] }) 
   /*
     Creamos una nueva instancia del modelo de usuario con los datos proporcionados sustituyendo la contraseña por su versión cifrada
   */
-  const user = new UserModel({ nombre, correo, contraseña: hashed, permisos });
+  const user = new UserModel({ id, nombre, correo, contraseña: hashed, permisos });
 
   // Guardamos el usuario en la base de datos y devolvemos el resultado
   return user.save();

@@ -5,7 +5,8 @@ const verifyToken = require("../middlewares/auth.middleware"); // Middleware de 
 const {
   createReservation,
   getReservationsByBook,
-  getReservationsByUser
+  getReservationsByUser,
+  endReservation
 } = require("../controllers/reservation.controller");
 
 
@@ -95,6 +96,10 @@ reservationRoutes.get(
     verifyToken,
     getReservationsByUser
 );
+
+
+reservationRoutes.put("/reservations/:id/end", verifyToken, endReservation);
+
  
 
 

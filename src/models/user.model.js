@@ -11,6 +11,13 @@ const mongoose = require("mongoose"); // Importamos mongoose para crear el esque
 */
 const UserSchema = new mongoose.Schema(
   {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      default: () => new mongoose.Types.ObjectId().toString(),
+    },
+
     /**
      * Nombre completo del usuario.
      * 

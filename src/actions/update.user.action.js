@@ -26,12 +26,23 @@ const UserModel = require("../models/user.model"); // Importamos el modelo de us
  * });
 */
 async function updateUserAction(id, updateData) {
-  // Utilizamos findByIdAndUpdate para buscar y actualizar en una sola operación
-  return UserModel.findByIdAndUpdate(
-    id, // ID del documento a actualizar
-    { $set: updateData }, // Operador $set de MongoDB para actualizar solo los campos proporcionados
-    { new: true } // Opción para devolver el documento actualizado en lugar del original
-  );
+  try {
+    // Eliminar campos sensibles que no deberían actualizarse directamente
+    delete updateData.contraseña;
+    
+    const user = await UserModel.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+    
+    if (!user) throw new Error("Usuario no encontrado");
+    return user;
+  } catch (error) {
+    if (error.name === 'CastError') 
+      throw new Error("ID de usuario inválido");
+    throw error;
+  }
 }
 
 

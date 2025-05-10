@@ -134,23 +134,15 @@ async function loginUser(req, res) {
 */
 async function updateUser(req, res) {
   try {
-    // Extraemos el ID desde los parámetros de la URL
     const { id } = req.params;
     
-    // Verificamos si el usuario tiene permiso para actualizar:
-    // - O es el mismo usuario (actualiza sus propios datos)
-    // - O tiene el permiso específico "modificar_usuario"
-    if (req.user.id !== id && !req.user.permisos.includes("modificar_usuario")) {
-      return res.status(403).json({ message: "No autorizado" });
+    if (String(req.user.id) !== String(id) && !req.user.permisos.includes("modificar_usuario")) {
+      return res.status(403).json({ message: "No autorizado..." });
     }
     
-    // Si tiene permiso, llamamos a la acción para actualizar los datos
     const user = await updateUserAction(id, req.body);
-    
-    // Devolvemos los datos actualizados
     res.json({ message: "Usuario actualizado", user });
   } catch (err) {
-    // Si hay error, devolvemos código 400 y el mensaje
     res.status(400).json({ message: err.message });
   }
 }
@@ -193,7 +185,7 @@ async function deleteUser(req, res) {
     // - O es el mismo usuario (elimina su propia cuenta)
     // - O tiene el permiso específico "inhabilitar_usuario"
     if (req.user.id !== id && !req.user.permisos.includes("inhabilitar_usuario")) {
-      return res.status(403).json({ message: "No autorizado" });
+      return res.status(403).json({ message: "No autorizado. No tienes los permisos para hacer eso. Contacta a un administrador." });
     }
     
     // Si tiene permiso, llamamos a la acción para deshabilitar el usuario
